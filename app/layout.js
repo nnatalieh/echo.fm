@@ -2,6 +2,8 @@ import "./globals.css"
 
 import { Poppins } from "next/font/google";
 
+import Provider from "./context/AuthContext";
+
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 
@@ -19,9 +21,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={font.className}>
-        <NavBar />
-        {children}
-        <Footer />
+        <Provider>
+          <NavBar />
+          {children}
+          <Footer />
+        </Provider>
       </body>
     </html>
   )
