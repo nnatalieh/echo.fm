@@ -6,6 +6,7 @@ const scopes = [
   "user-read-email",
   "user-read-currently-playing",
   "user-read-recently-played",
+  "user-top-read",
 ].join(",");
 
 const params = {
