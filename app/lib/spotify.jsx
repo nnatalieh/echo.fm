@@ -66,3 +66,20 @@ export const getCurrentPlayingTrack = async (session) => {
     console.error('Error:', error);
   }
 };
+
+export const getTrackRecommendations = async (session, seedTracks) => {
+  try {
+    const response = await fetch(`https://api.spotify.com/v1/recommendations?limit=5&seed_tracks=${seedTracks}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${session?.accessToken}` }
+    });
+
+    if (!response.ok) {
+      throw new Error(`getTrackRecommendations error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};

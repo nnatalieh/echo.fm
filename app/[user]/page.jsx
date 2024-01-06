@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
-import { getTopArtists, getTopTracks, getRecentlyPlayedTracks, getCurrentPlayingTrack } from "app/lib/spotify";
+import { getTopArtists, getTopTracks, getRecentlyPlayedTracks, getCurrentPlayingTrack, getTrackRecommendations } from "app/lib/spotify";
 
 
 export default function Page({ params }) {
@@ -12,11 +12,17 @@ export default function Page({ params }) {
   const [topTracks, setTopTracks] = useState(null);
   const [recentlyPlayedTracks, setRecentlyPlayedTracks] = useState(null);
   const [currentPlayingTrack, setCurrentPlayingTrack] = useState(null);
+  const [trackRecommendations, setTrackRecommendations] = useState(null);
 
   useEffect(() => {
     if (session) {
       getTopArtists(session).then(data => setTopArtists(data.items));
-      getTopTracks(session).then(data => setTopTracks(data.items));
+      getTopTracks(session).then(data => {
+        setTopTracks(data.items);
+        // Uses the IDs of the first 5 top tracks as seed tracks
+        const seedTracks = data.items.slice(0, 5).map(track => track.id).join(',');
+        getTrackRecommendations(session, seedTracks).then(data => setTrackRecommendations(data.tracks));
+      });
       getRecentlyPlayedTracks(session).then(data => setRecentlyPlayedTracks(data.items));
       getCurrentPlayingTrack(session).then(data => {
         // checks if song is playing, if so, set currentPlayingTrack 
@@ -43,6 +49,14 @@ export default function Page({ params }) {
         <div>
           <h1 className="text-xl">Top Tracks</h1>
           {(topTracks) && topTracks.map((track, index) => (
+            <p key={index}>{track.name}</p>
+          ))}
+        </div>
+
+        {/* User's track recommendations */}
+        <div>
+          <h1 className="text-xl">Track Recommendations</h1>
+          {(trackRecommendations) && trackRecommendations.map((track, index) => (
             <p key={index}>{track.name}</p>
           ))}
         </div>
