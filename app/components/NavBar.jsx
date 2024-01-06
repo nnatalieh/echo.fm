@@ -1,9 +1,16 @@
+import Link from "next/link";
+
 import LoginButton from "./LoginButton";
 
 const NavBar = () => (
   <nav>
-    <div className="flex items-center justify-between">
-      <h1>NavBar</h1>
+    <div className="flex items-center justify-between px-6 py-2">
+      <Link 
+        className="text-4xl font-bold text-pink-600 hover:text-white"
+        href="/"
+      >
+        echo.fm
+      </Link>
       <LoginButton />
     </div>
   </nav>

@@ -1,17 +1,25 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-import { signIn } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 const LoginButton = () => {
   const { data: session } = useSession();
 
+  const handleButton = () => {
+    if (session) {
+      signOut({ callbackUrl: "/" });
+    } else {
+      signIn("spotify", { callbackUrl: `/${session?.user.name}` });
+    }
+  };
+
   return (
     <button
-      className="text-white bg-pink-600 p-2"
-      onClick={() => signIn("spotify", { callbackUrl: `/${session?.user.name}` })}
+      className="text-white hover:text-black bg-pink-600 hover:bg-white text-lg font-bold rounded-lg p-2 "
+      onClick={handleButton}
     >
-      LoginButton
+      {/* TODO: change "Logged in" to the user's profile pic and name */}
+      {session ? "Logged in" : "Login with Spotify"}
     </button>
   );
 };
