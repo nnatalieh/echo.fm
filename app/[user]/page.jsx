@@ -14,10 +14,25 @@ export default function Page({ params }) {
   const [currentPlayingTrack, setCurrentPlayingTrack] = useState(null);
   const [trackRecommendations, setTrackRecommendations] = useState(null);
 
+  const [artistsTimeRange, setArtistsTimeRange] = useState("long_term");
+  const [tracksTimeRange, setTracksTimeRange] = useState("long_term");
+
+  const handleRangeButton = (type, range) => {
+    if (session) {
+      if (type === "artists") {
+        setArtistsTimeRange(range);
+        getTopArtists(session, range).then(data => setTopArtists(data.items));
+      } else if (type === "tracks") {
+        setTracksTimeRange(range);
+        getTopTracks(session, range).then(data => setTopTracks(data.items));
+      }
+    }
+  };
+
   useEffect(() => {
     if (session) {
-      getTopArtists(session).then(data => setTopArtists(data.items));
-      getTopTracks(session).then(data => {
+      getTopArtists(session, artistsTimeRange).then(data => setTopArtists(data.items));
+      getTopTracks(session, tracksTimeRange).then(data => {
         setTopTracks(data.items);
         // Uses the IDs of the first 5 top tracks as seed tracks
         const seedTracks = data.items.slice(0, 5).map(track => track.id).join(',');
@@ -43,6 +58,11 @@ export default function Page({ params }) {
           {(topArtists) && topArtists.map((artist, index) => (
             <p key={index}>{artist.name}</p>
           ))}
+          <div className="flex gap-x-2 font-bold text-pink-600 ">
+            <button onClick={() => handleRangeButton("artists", "short_term")}>1m</button>
+            <button onClick={() => handleRangeButton("artists", "medium_term")}>6m</button>
+            <button onClick={() => handleRangeButton("artists", "long_term")}>all time</button>
+          </div>
         </div>
           
         {/* User's top tracks */}
@@ -51,6 +71,11 @@ export default function Page({ params }) {
           {(topTracks) && topTracks.map((track, index) => (
             <p key={index}>{track.name}</p>
           ))}
+          <div className="flex gap-x-2 font-bold text-pink-600">
+            <button onClick={() => handleRangeButton("tracks", "short_term")}>1m</button>
+            <button onClick={() => handleRangeButton("tracks", "medium_term")}>6m</button>
+            <button onClick={() => handleRangeButton("tracks", "long_term")}>all time</button>
+          </div>
         </div>
 
         {/* User's track recommendations */}
