@@ -1,7 +1,7 @@
 
 export const getTopArtists = async (session, timeRange) => {
   try {
-    const response = await fetch(`https://api.spotify.com/v1/me/top/artists?time_range=${timeRange}&limit=5`, {
+    const response = await fetch(`https://api.spotify.com/v1/me/top/artists?time_range=${timeRange}&limit=50`, {
       method: "GET",
       headers: { Authorization: `Bearer ${session?.accessToken}` }
     });
@@ -82,4 +82,25 @@ export const getTrackRecommendations = async (session, seedTracks) => {
   } catch (error) {
     console.error('Error:', error);
   }
+};
+
+export const getTopGenres = async (session, time_range) => {
+  const response = await getTopArtists(session, time_range);
+  const topArtists = response.items;
+
+  const genreCounts = {};
+
+  topArtists.forEach(artist => {
+    artist.genres.forEach(genre => {
+      if (genre in genreCounts) {
+        genreCounts[genre]++;
+      } else {
+        genreCounts[genre] = 1;
+      }
+    });
+  });
+
+  const sortedGenres = Object.entries(genreCounts).sort((a, b) => b[1] - a[1]);
+
+  return sortedGenres.slice(0, 5);
 };

@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
-import { getTopArtists, getTopTracks, getRecentlyPlayedTracks, getCurrentPlayingTrack, getTrackRecommendations } from "app/lib/spotify";
+import { getTopArtists, getTopTracks, getRecentlyPlayedTracks, getCurrentPlayingTrack, getTrackRecommendations, getTopGenres } from "app/lib/spotify";
 
 
 export default function Page({ params }) {
@@ -13,9 +13,11 @@ export default function Page({ params }) {
   const [recentlyPlayedTracks, setRecentlyPlayedTracks] = useState(null);
   const [currentPlayingTrack, setCurrentPlayingTrack] = useState(null);
   const [trackRecommendations, setTrackRecommendations] = useState(null);
+  const [topGenres, setTopGenres] = useState(null);
 
   const [artistsTimeRange, setArtistsTimeRange] = useState("long_term");
   const [tracksTimeRange, setTracksTimeRange] = useState("long_term");
+  const [genresTimeRange, setGenresTimeRange] = useState("long_term");
 
   const handleRangeButton = (type, range) => {
     if (session) {
@@ -25,6 +27,9 @@ export default function Page({ params }) {
       } else if (type === "tracks") {
         setTracksTimeRange(range);
         getTopTracks(session, range).then(data => setTopTracks(data.items));
+      } else if (type === "genres") {
+        setGenresTimeRange(range);
+        getTopGenres(session, range).then(data => setTopGenres(data));
       }
     }
   };
@@ -45,6 +50,7 @@ export default function Page({ params }) {
           setCurrentPlayingTrack(data.item);
         }
       });
+      getTopGenres(session, genresTimeRange).then(data => setTopGenres(data));
     }
   }, [session]);
 
@@ -52,10 +58,23 @@ export default function Page({ params }) {
     <div>
       <h1>User: {params.user}</h1>
       <div className="flex justify-between">
+        {/* User's top genres */}
+        <div>
+          <h1 className="text-xl">Top Genres</h1>
+          {(topGenres) && topGenres.map((genre, index) => (
+            <p key={index}>{genre[0]}</p>
+          ))}
+          <div className="flex gap-x-2 font-bold text-pink-600 ">
+            <button onClick={() => handleRangeButton("genres", "short_term")}>1m</button>
+            <button onClick={() => handleRangeButton("genres", "medium_term")}>6m</button>
+            <button onClick={() => handleRangeButton("genres", "long_term")}>all time</button>
+          </div>
+        </div>
+
         {/* User's top artists */}
         <div>
           <h1 className="text-xl">Top Artists</h1>
-          {(topArtists) && topArtists.map((artist, index) => (
+          {(topArtists) && topArtists.slice(0, 5).map((artist, index) => (
             <p key={index}>{artist.name}</p>
           ))}
           <div className="flex gap-x-2 font-bold text-pink-600 ">
