@@ -8,19 +8,21 @@ const LoginButton = () => {
   const handleButton = () => {
     if (session) {
       signOut({ callbackUrl: "/" });
-    } else {
-      signIn("spotify", { callbackUrl: `/${session?.user.name}` });
+    } else {  
+      signIn("spotify", { callbackUrl: "/dashboard" });
     }
   };
 
   return (
-    <button
-      className="text-white hover:text-black bg-pink-600 hover:bg-white text-lg font-bold rounded-lg p-2 "
-      onClick={handleButton}
-    >
-      {/* TODO: change "Logged in" to the user's profile pic and name */}
-      {session ? "Logged in" : "Login with Spotify"}
-    </button>
+    <div>
+      <button
+        className="text-white hover:text-black bg-pink-600 hover:bg-white text-lg font-bold rounded-lg p-2"
+        onClick={handleButton}
+      >
+        {/* TODO: change "Logged in" to the user's profile pic and name */}
+        {session ? "Logged in" : "Login with Spotify"}
+      </button>
+    </div>
   );
 };
 

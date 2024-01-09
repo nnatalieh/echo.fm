@@ -56,7 +56,7 @@ export default function Page({ params }) {
 
   return (
     <div>
-      <h1>User: {params.user}</h1>
+      <h1>User: {session?.user.name}</h1>
       <div className="flex justify-between">
         {/* User's top genres */}
         <div>
