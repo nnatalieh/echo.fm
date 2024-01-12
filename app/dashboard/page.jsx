@@ -3,122 +3,93 @@
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
-import { getTopArtists, getTopTracks, getRecentlyPlayedTracks, getCurrentPlayingTrack, getTrackRecommendations, getTopGenres } from "app/lib/spotify";
+import { getCurrentPlayingTrack, getTopArtists, getTopTracks, getTopGenres, getTrackRecommendations, getRecentlyPlayedTracks } from "../lib/spotify";
+import CurrentlyPlaying from "../components/CurrentlyPlaying";
+import TopArtists from "../components/TopArtists";
+import TopTracks from "../components/TopTracks";
+import TopGenres from "../components/TopGenres";
+import TrackRecommendations from "../components/TrackRecommendations";
+import RecentlyPlayed from "../components/RecentlyPlayed";
 
-
-export default function Page({ params }) {
+export default function Page() {
   const { data: session } = useSession();
-  const [topArtists, setTopArtists] = useState(null);
-  const [topTracks, setTopTracks] = useState(null);
-  const [recentlyPlayedTracks, setRecentlyPlayedTracks] = useState(null);
+
+  const [apiResponses, setApiResponses] = useState({});
+  const [timeRange, setTimeRange] = useState("long_term");
+  const { topArtists, topTracks, topGenres, trackRecommendations } = apiResponses[timeRange] || {};
   const [currentPlayingTrack, setCurrentPlayingTrack] = useState(null);
-  const [trackRecommendations, setTrackRecommendations] = useState(null);
-  const [topGenres, setTopGenres] = useState(null);
+  const [recentlyPlayedTracks, setRecentlyPlayedTracks] = useState(null);
 
-  const [artistsTimeRange, setArtistsTimeRange] = useState("long_term");
-  const [tracksTimeRange, setTracksTimeRange] = useState("long_term");
-  const [genresTimeRange, setGenresTimeRange] = useState("long_term");
-
-  const handleRangeButton = (type, range) => {
+  const handleRangeButton = async (range) => {
     if (session) {
-      if (type === "artists") {
-        setArtistsTimeRange(range);
-        getTopArtists(session, range).then(data => setTopArtists(data.items));
-      } else if (type === "tracks") {
-        setTracksTimeRange(range);
-        getTopTracks(session, range).then(data => setTopTracks(data.items));
-      } else if (type === "genres") {
-        setGenresTimeRange(range);
-        getTopGenres(session, range).then(data => setTopGenres(data));
+      setTimeRange(range);
+      if (!apiResponses[range]) {
+        await fetchData(session, range);
       }
-    }
+    };
+  };
+
+  async function fetchData(session, range) {
+    const topArtistsData = await getTopArtists(session, range);
+    const topTracksData = await getTopTracks(session, range);
+    const topGenresData = await getTopGenres(topArtistsData);
+
+    const seedTracks = topTracksData.items.slice(0, 5).map(track => track.id).join(',');
+    const trackRecommendationsData = await getTrackRecommendations(session, seedTracks);
+
+    setApiResponses(prevResponses => ({
+      ...prevResponses,
+      [range]: {
+        topArtists: topArtistsData.items,
+        topTracks: topTracksData.items,
+        topGenres: topGenresData,
+        trackRecommendations: trackRecommendationsData.tracks
+      }
+    }));
   };
 
   useEffect(() => {
     if (session) {
-      getTopArtists(session, artistsTimeRange).then(data => setTopArtists(data.items));
-      getTopTracks(session, tracksTimeRange).then(data => {
-        setTopTracks(data.items);
-        // Uses the IDs of the first 5 top tracks as seed tracks
-        const seedTracks = data.items.slice(0, 5).map(track => track.id).join(',');
-        getTrackRecommendations(session, seedTracks).then(data => setTrackRecommendations(data.tracks));
-      });
-      getRecentlyPlayedTracks(session).then(data => setRecentlyPlayedTracks(data.items));
+      fetchData(session, timeRange);
       getCurrentPlayingTrack(session).then(data => {
         // checks if song is playing, if so, set currentPlayingTrack 
         if (data) {
           setCurrentPlayingTrack(data.item);
         }
       });
-      getTopGenres(session, genresTimeRange).then(data => setTopGenres(data));
+      getRecentlyPlayedTracks(session).then(data => setRecentlyPlayedTracks(data.items));
     }
   }, [session]);
 
   return (
-    <div>
-      <h1>User: {session?.user.name}</h1>
-      <div className="flex justify-between">
-        {/* User's top genres */}
-        <div>
-          <h1 className="text-xl">Top Genres</h1>
-          {(topGenres) && topGenres.map((genre, index) => (
-            <p key={index}>{genre[0]}</p>
-          ))}
-          <div className="flex gap-x-2 font-bold text-pink-600 ">
-            <button onClick={() => handleRangeButton("genres", "short_term")}>1m</button>
-            <button onClick={() => handleRangeButton("genres", "medium_term")}>6m</button>
-            <button onClick={() => handleRangeButton("genres", "long_term")}>all time</button>
-          </div>
-        </div>
-
-        {/* User's top artists */}
-        <div>
-          <h1 className="text-xl">Top Artists</h1>
-          {(topArtists) && topArtists.slice(0, 5).map((artist, index) => (
-            <p key={index}>{artist.name}</p>
-          ))}
-          <div className="flex gap-x-2 font-bold text-pink-600 ">
-            <button onClick={() => handleRangeButton("artists", "short_term")}>1m</button>
-            <button onClick={() => handleRangeButton("artists", "medium_term")}>6m</button>
-            <button onClick={() => handleRangeButton("artists", "long_term")}>all time</button>
-          </div>
-        </div>
-          
-        {/* User's top tracks */}
-        <div>
-          <h1 className="text-xl">Top Tracks</h1>
-          {(topTracks) && topTracks.map((track, index) => (
-            <p key={index}>{track.name}</p>
-          ))}
-          <div className="flex gap-x-2 font-bold text-pink-600">
-            <button onClick={() => handleRangeButton("tracks", "short_term")}>1m</button>
-            <button onClick={() => handleRangeButton("tracks", "medium_term")}>6m</button>
-            <button onClick={() => handleRangeButton("tracks", "long_term")}>all time</button>
-          </div>
-        </div>
-
-        {/* User's track recommendations */}
-        <div>
-          <h1 className="text-xl">Track Recommendations</h1>
-          {(trackRecommendations) && trackRecommendations.map((track, index) => (
-            <p key={index}>{track.name}</p>
-          ))}
-        </div>
-
-        {/* User's recently played tracks */}
-        <div>
-          <h1 className="text-xl">Recently Played Tracks</h1>
-          {(recentlyPlayedTracks) && recentlyPlayedTracks.map((track, index) => (
-            <p key={index}>{track.track.name}</p>
-          ))}
-        </div>
-
+    <div className="overflow-hidden">
+      {/* Top Section */}
+      <div className="flex flex-col justify-between items-center gap-y-10 pt-32 pb-10 px-8 md:flex-row lg:px-[8%] xl:px-[14%]">
+        {/* User's profile info */}
+        <section className="flex flex-col items-center gap-x-5 gap-y-8 w-[150%] md:flex-row">
+          <img className="w-40 h-40 rounded-full" src={session?.user.image} alt="profile picture" />
+          <h1 className="text-3xl font-bold truncate">{session?.user.name}</h1>
+        </section>
         {/* User's currently playing track */}
-        <div>
-          <h1 className="text-xl">Currently Playing Track</h1>
-          {(currentPlayingTrack) && (
-            <p>{currentPlayingTrack.name}</p>
-          )}
+        <CurrentlyPlaying currentPlayingTrack={currentPlayingTrack} />
+      </div>
+
+      {/* Bottom Section */}
+      <div className=" flex flex-col gap-y-4 pt-12 px-8 bg-primary-dark-gray lg:justify-between lg:px-[8%] xl:px-[14%]">
+        {/* Time range buttons (controls: artists, tracks, genres, and recommendations) */}
+        <section className="flex justify-end gap-x-2 text-lg font-extrabold text-primary-pink">
+          <button className={`px-3 py-1 bg-primary-med-gray rounded hover:text-primary-white ${timeRange === "short_term" ? "text-primary-white bg-primary-pink" : ""}`} onClick={() => handleRangeButton("short_term")}>1m</button>
+          <button className={`px-3 py-1 bg-primary-med-gray rounded hover:text-primary-white ${timeRange === "medium_term" ? "text-primary-white bg-primary-pink" : ""}`} onClick={() => handleRangeButton("medium_term")}>6m</button>
+          <button className={`px-3 py-1 bg-primary-med-gray rounded hover:text-primary-white ${timeRange === "long_term" ? "text-primary-white bg-primary-pink" : ""}`} onClick={() => handleRangeButton("long_term")}>all time</button>
+        </section>
+
+        {/* User stats */}
+        <div className="flex flex-col gap-y-20">
+          <TopArtists topArtists={topArtists} />
+          <TopTracks topTracks={topTracks} />
+          <TopGenres topGenres={topGenres} />
+          <TrackRecommendations trackRecommendations={trackRecommendations} />
+          <RecentlyPlayed recentlyPlayedTracks={recentlyPlayedTracks} />
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 
 export const getTopArtists = async (session, timeRange) => {
   try {
-    const response = await fetch(`https://api.spotify.com/v1/me/top/artists?time_range=${timeRange}&limit=50`, {
+    const response = await fetch(`https://api.spotify.com/v1/me/top/artists?time_range=${timeRange}&limit=25`, {
       method: "GET",
       headers: { Authorization: `Bearer ${session?.accessToken}` }
     });
@@ -18,7 +18,7 @@ export const getTopArtists = async (session, timeRange) => {
 
 export const getTopTracks = async (session, timeRange) => {
   try {
-    const response = await fetch(`https://api.spotify.com/v1/me/top/tracks?time_range=${timeRange}&limit=5`, {
+    const response = await fetch(`https://api.spotify.com/v1/me/top/tracks?time_range=${timeRange}&limit=25`, {
       method: "GET",
       headers: { Authorization: `Bearer ${session?.accessToken}` }
     });
@@ -35,7 +35,7 @@ export const getTopTracks = async (session, timeRange) => {
 
 export const getRecentlyPlayedTracks = async (session) => {
   try {
-    const response = await fetch("https://api.spotify.com/v1/me/player/recently-played?limit=5", {
+    const response = await fetch("https://api.spotify.com/v1/me/player/recently-played?limit=25", {
       method: "GET",
       headers: { Authorization: `Bearer ${session?.accessToken}` }
     });
@@ -61,7 +61,8 @@ export const getCurrentPlayingTrack = async (session) => {
       throw new Error(`getCurrentPlayingTrack error! status: ${response.status}`);
     }
 
-    return await response.json();
+    const data = await response.text();
+    return data ? JSON.parse(data) : {};
   } catch (error) {
     console.error('Error:', error);
   }
@@ -69,7 +70,7 @@ export const getCurrentPlayingTrack = async (session) => {
 
 export const getTrackRecommendations = async (session, seedTracks) => {
   try {
-    const response = await fetch(`https://api.spotify.com/v1/recommendations?limit=5&seed_tracks=${seedTracks}`, {
+    const response = await fetch(`https://api.spotify.com/v1/recommendations?limit=25&seed_tracks=${seedTracks}`, {
       method: "GET",
       headers: { Authorization: `Bearer ${session?.accessToken}` }
     });
@@ -84,9 +85,8 @@ export const getTrackRecommendations = async (session, seedTracks) => {
   }
 };
 
-export const getTopGenres = async (session, time_range) => {
-  const response = await getTopArtists(session, time_range);
-  const topArtists = response.items;
+export const getTopGenres = async (topArtists) => {
+  topArtists = topArtists.items;
 
   const genreCounts = {};
 
@@ -102,5 +102,5 @@ export const getTopGenres = async (session, time_range) => {
 
   const sortedGenres = Object.entries(genreCounts).sort((a, b) => b[1] - a[1]);
 
-  return sortedGenres.slice(0, 5);
+  return sortedGenres;
 };

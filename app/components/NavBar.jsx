@@ -6,7 +6,7 @@ const NavBar = () => (
   <nav>
     <div className="flex items-center justify-between px-6 py-2">
       <Link 
-        className="text-4xl font-bold text-pink-600 hover:text-white"
+        className="text-4xl font-bold text-primary-pink hover:text-primary-white"
         href="/"
       >
         echo.fm

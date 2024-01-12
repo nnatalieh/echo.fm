@@ -16,7 +16,7 @@ const LoginButton = () => {
   return (
     <div>
       <button
-        className="text-white hover:text-black bg-pink-600 hover:bg-white text-lg font-bold rounded-lg p-2"
+        className="text-primary-white hover:text-primary-dark-gray bg-primary-pink hover:bg-primary-white text-lg font-bold rounded-lg p-2"
         onClick={handleButton}
       >
         {/* TODO: change "Logged in" to the user's profile pic and name */}
