@@ -11,8 +11,9 @@ module.exports = {
       'primary-light-gray': '#aeaeb9',
       'primary-med-gray': '#27272e',
       'primary-dark-gray': '#0c0c0e',
+      'primary-light-pink': '#fce7f3',
       'primary-pink': '#db2777',
-      'primary-light-pink': '#fce7f3'
+      'primary-dark-pink': '#b11e5f'
     },
     extend: {
       backgroundImage: {
