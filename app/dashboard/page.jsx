@@ -75,7 +75,7 @@ export default function Page() {
       </div>
 
       {/* Bottom Section */}
-      <div className=" flex flex-col gap-y-4 pt-12 px-8 bg-primary-dark-gray lg:justify-between lg:px-[8%] xl:px-[14%]">
+      <div className="flex flex-col gap-y-4 pt-12 px-8 bg-primary-dark-gray lg:justify-between lg:px-[8%] xl:px-[14%]">
         {/* Time range buttons (controls: artists, tracks, genres, and recommendations) */}
         <section className="flex justify-end gap-x-2 text-lg font-extrabold text-primary-pink">
           <button className={`px-3 py-1 bg-primary-med-gray rounded hover:text-primary-white ${timeRange === "short_term" ? "text-primary-white bg-primary-pink" : ""}`} onClick={() => handleRangeButton("short_term")}>1m</button>
@@ -84,7 +84,7 @@ export default function Page() {
         </section>
 
         {/* User stats */}
-        <div className="flex flex-col gap-y-20">
+        <div className="flex flex-col gap-y-16">
           <TopArtists topArtists={topArtists} />
           <TopTracks topTracks={topTracks} />
           <TopGenres topGenres={topGenres} />
