@@ -84,18 +84,18 @@ const LoginButton = () => {
             onClick={toggleDropdown}
           >
             <div className="flex items-center gap-x-2 py-2 px-3">
-              <img className="w-8 h-8 rounded-full" src={session?.user.image} alt="profile picture" />
-              <p>{session?.user.name}</p>
+              <img className="w-6 lg:w-8 h-6 lg:h-8 rounded-full" src={session?.user.image} alt="profile picture" />
+              <p className="truncate text-sm lg:text-lg">{session?.user.name}</p>
             </div>
           </button>
           {dropdownOpen && <MyDropdown />}
         </>
       ) : (
         <button
-          className="py-2 px-3 text-lg font-bold rounded-full text-primary-white hover:text-primary-dark-gray bg-primary-pink hover:bg-primary-white"
+          className="py-2 px-3 rounded-full bg-primary-pink hover:bg-primary-white"
           onClick={() => signIn('spotify', { callbackUrl: '/dashboard' } )}
         >
-          Login with Spotify
+          <span className="truncate text-sm lg:text-lg font-bold text-primary-white hover:text-primary-dark-gray">Login with Spotify</span>
         </button>
       )}
     </div>
