@@ -10,7 +10,7 @@ const NavBar = () => (
         href="/"
       >
         <img className="h-8 lg:h-12" src="/favicon.ico" alt="logo" />
-        <span className="text-3xl lg:text-4xl font-bold text-primary-pink hover:text-primary-white">echo.fm</span>
+        <span className="text-3xl lg:text-4xl font-bold text-primary-pink hover:text-primary-light-pink">echo.fm</span>
       </Link>
       <div className="flex-shrink">
         <LoginButton />
