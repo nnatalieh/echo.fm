@@ -84,14 +84,14 @@ export default function Page() {
         </section>
 
         {/* User stats */}
-        <div className="flex flex-col gap-y-16">
-          <TopArtists topArtists={topArtists} />
-          <TopTracks topTracks={topTracks} />
-          <TopGenres topGenres={topGenres} />
-          <TrackRecommendations trackRecommendations={trackRecommendations} />
-          <RecentlyPlayed recentlyPlayedTracks={recentlyPlayedTracks} />
+          <div className="flex flex-col gap-y-16">
+            <TopArtists topArtists={topArtists} />
+            <TopTracks session={session} topTracks={topTracks} />
+            <TopGenres session={session} topGenres={topGenres} />
+            <TrackRecommendations session={session} trackRecommendations={trackRecommendations} />
+            <RecentlyPlayed recentlyPlayedTracks={recentlyPlayedTracks} />
+          </div>
         </div>
-      </div>
     </div>
   );
 }

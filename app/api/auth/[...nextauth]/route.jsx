@@ -4,9 +4,12 @@ import fetch from "node-fetch";
 
 const scopes = [
   "user-read-email",
+  "user-read-private",
   "user-read-currently-playing",
   "user-read-recently-played",
   "user-top-read",
+  "playlist-modify-public",
+  "playlist-modify-private",
 ].join(",");
 
 const params = {
