@@ -28,11 +28,11 @@ const formatTime = (timestamp) => {
 const RecentlyPlayed = ({ recentlyPlayedTracks }) => {
   return (
     <section className="flex flex-col gap-y-4">
-      <h2 className="text-3xl">Recently Played</h2> 
+      <h2 className="truncate text-2xl md:text-3xl">Recently Played</h2>
       <ul>
         {(recentlyPlayedTracks) && recentlyPlayedTracks.map((track, index) => (
           <li key={index} className="flex justify-between items-center gap-x-4 py-3 border-b border-primary-med-gray">
-            <div className="flex items-center gap-x-3 w-[75%]">
+            <div className="flex items-center gap-x-3 w-[85%]">
               <img className="w-12 h-12 rounded-lg" src={track.track.album.images[0].url} alt="album image" />
               <div className="flex flex-col justify-between gap-x-4 w-[75%] lg:flex-row">
                 <h1 className="font-bold truncate">{track.track.name}</h1>

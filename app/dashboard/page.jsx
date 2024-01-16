@@ -64,7 +64,7 @@ export default function Page() {
   return (
     <div className="overflow-hidden">
       {/* Top Section */}
-      <div className="flex flex-col justify-between items-center gap-y-10 pt-32 pb-10 px-8 md:flex-row lg:px-[8%] xl:px-[14%]">
+      <div className="flex flex-col justify-between items-center gap-y-10 pt-24 md:pt-32 pb-10 px-8 md:flex-row lg:px-[8%] xl:px-[14%]">
         {/* User's profile info */}
         <section className="flex flex-col items-center gap-x-5 gap-y-8 w-[150%] md:flex-row">
           <img className="w-40 h-40 rounded-full" src={session?.user.image} alt="profile picture" />
@@ -75,20 +75,20 @@ export default function Page() {
       </div>
 
       {/* Bottom Section */}
-      <div className="flex flex-col gap-y-4 pt-12 px-8 bg-primary-dark-gray lg:justify-between lg:px-[8%] xl:px-[14%]">
+      <div className="flex flex-col gap-y-8 pt-12 px-8 bg-primary-dark-gray lg:justify-between lg:px-[8%] xl:px-[14%]">
         {/* Time range buttons (controls: artists, tracks, genres, and recommendations) */}
         <section className="flex justify-end gap-x-2 text-lg font-extrabold text-primary-pink">
-          <button className={`px-3 py-1 bg-primary-med-gray rounded hover:text-primary-white ${timeRange === "short_term" ? "text-primary-white bg-primary-pink" : ""}`} onClick={() => handleRangeButton("short_term")}>1m</button>
-          <button className={`px-3 py-1 bg-primary-med-gray rounded hover:text-primary-white ${timeRange === "medium_term" ? "text-primary-white bg-primary-pink" : ""}`} onClick={() => handleRangeButton("medium_term")}>6m</button>
-          <button className={`px-3 py-1 bg-primary-med-gray rounded hover:text-primary-white ${timeRange === "long_term" ? "text-primary-white bg-primary-pink" : ""}`} onClick={() => handleRangeButton("long_term")}>all time</button>
+          <button className={`px-3 py-1 bg-primary-med-gray rounded hover:text-primary-light-pink ${timeRange === "short_term" ? "text-primary-light-pink bg-primary-pink" : ""}`} onClick={() => handleRangeButton("short_term")}>1m</button>
+          <button className={`px-3 py-1 bg-primary-med-gray rounded hover:text-primary-light-pink ${timeRange === "medium_term" ? "text-primary-light-pink bg-primary-pink" : ""}`} onClick={() => handleRangeButton("medium_term")}>6m</button>
+          <button className={`px-3 py-1 bg-primary-med-gray rounded hover:text-primary-light-pink ${timeRange === "long_term" ? "text-primary-light-pink bg-primary-pink" : ""}`} onClick={() => handleRangeButton("long_term")}>all time</button>
         </section>
 
         {/* User stats */}
           <div className="flex flex-col gap-y-16">
-            <TopArtists topArtists={topArtists} />
-            <TopTracks session={session} topTracks={topTracks} />
-            <TopGenres session={session} topGenres={topGenres} />
-            <TrackRecommendations session={session} trackRecommendations={trackRecommendations} />
+            <TopArtists timeRange={timeRange} topArtists={topArtists} />
+            <TopTracks session={session} timeRange={timeRange} topTracks={topTracks} />
+            <TopGenres session={session} timeRange={timeRange} topGenres={topGenres} />
+            <TrackRecommendations session={session} timeRange={timeRange} trackRecommendations={trackRecommendations} />
             <RecentlyPlayed recentlyPlayedTracks={recentlyPlayedTracks} />
           </div>
         </div>

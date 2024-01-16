@@ -1,14 +1,22 @@
 import { saveToPlaylist } from "../lib/spotify";
 
-const TrackRecommendations = ({ session, trackRecommendations }) => {
-  const trackUris = trackRecommendations ? trackRecommendations.map(track => 'spotify:track:' + track.id).join(',') : '';
+const TrackRecommendations = ({ session, timeRange, trackRecommendations }) => {
+  const trackUris = trackRecommendations ? trackRecommendations.map(track => "spotify:track:" + track.id).join(",") : "";
+
+  const term = {
+    "short_term": "1 month",
+    "medium_term": "6 months"
+  };
 
   return (
-    <section className="flex flex-col gap-y-4">
+    <section className="flex flex-col gap-y-3">
       <div className="flex justify-between items-center">
-        <h2 className="truncate text-3xl">Track Recommendations</h2>
+        <div className="flex flex-col gap-y-2 truncate">
+          <h2 className="truncate text-2xl md:text-3xl">Track Recommendations</h2>
+          <p className="truncate text-sm font-medium text-primary-light-gray">{timeRange === "long_term" ? "Your top recommendations of all time" : `Your top recommendations within the last ${term[timeRange]}`}</p>
+        </div>
         <button
-          className="truncate text-base md:text-lg font-bold px-3 py-2 rounded-xl text-primary-light-pink bg-primary-dark-pink"
+          className="truncate text-base md:text-lg font-bold px-3 py-2 rounded-xl text-primary-light-pink bg-primary-dark-pink hover:bg-opacity-85"
           onClick={() => saveToPlaylist(session, trackUris, "Track Recommendations")}>
             Save to playlist
         </button>
